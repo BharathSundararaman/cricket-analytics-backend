@@ -70,6 +70,48 @@ MainApp.java
 
 The application will connect to the database and perform analytics queries.
 
+
+## Architecture
+
+The backend follows a layered architecture separating database access, business logic, and application entry point.
+
++----------------------+
+|      MainApp         |
+|  (Application Layer) |
++----------+-----------+
+|
+v
++----------------------+
+|     Service Layer    |
+|  PlayerService etc.  |
++----------+-----------+
+|
+v
++----------------------+
+|       DAO Layer      |
+| PlayerDAO / MatchDAO |
++----------+-----------+
+|
+v
++----------------------+
+|   JDBC Connection    |
+|    DBConnection      |
++----------+-----------+
+|
+v
++----------------------+
+|   MySQL Database     |
+| cricket_analytics_db |
++----------------------+
+
+## Example Output
+
+Example console output for top run scorers:
+
+Virat Kohli : 45  
+Yuvraj Singh : 67  
+MS Dhoni : 72
+
 ## Example Analytics Queries
 
 - Top run scorers
