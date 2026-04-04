@@ -1,35 +1,52 @@
 package com.bharath.cricket.dao;
 
-import com.bharath.cricket.config.DBConnection;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MatchDAO {
-    public void getMatchScorecard(int matchId){
-        try{
-            Connection conn=DBConnection.getConnection();
+
+    private final Connection conn;
+
+    // Constructor Injection (Correct)
+    public MatchDAO(Connection conn) {
+        this.conn = conn;
+    }
+
+    // Returns data instead of printing
+    public List<List<String>> getMatchScorecard(int matchId) {
+
+        List<List<String>> result = new ArrayList<>();
+
+        try {
             CallableStatement stmt = conn.prepareCall("{CALL get_match_scorecard(?)}");
-            stmt.setInt(1,matchId);
-            boolean hasResults =stmt.execute();
-            int resultSetCount=1;
+            stmt.setInt(1, matchId);
 
-            while(hasResults){
-                ResultSet rs= stmt.getResultSet();
-                System.out.println("\n Result Set " + resultSetCount);
+            boolean hasResults = stmt.execute();
 
+            while (hasResults) {
+
+                ResultSet rs = stmt.getResultSet();
                 ResultSetMetaData meta = rs.getMetaData();
-                int columns=meta.getColumnCount();
+                int columns = meta.getColumnCount();
 
-                while(rs.next()){
-                    for(int i=1;i<=columns;i++){
-                        System.out.print(rs.getString(i) + " | ");
+                while (rs.next()) {
+                    List<String> row = new ArrayList<>();
+
+                    for (int i = 1; i <= columns; i++) {
+                        row.add(rs.getString(i));
                     }
-                    System.out.println();
+
+                    result.add(row);
                 }
-                resultSetCount++;
-                hasResults=stmt.getMoreResults();
+
+                hasResults = stmt.getMoreResults();
             }
-            conn.close();
-        }catch (Exception e){
-            e.printStackTrace();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching match scorecard", e);
         }
+
+        return result;
     }
 }

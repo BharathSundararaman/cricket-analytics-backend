@@ -1,16 +1,26 @@
 package com.bharath.cricket.config;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
-public class DBConnection {
-    private static final String URL= "jdbc:mysql://localhost:3306/cricket_analytics_db";
-    private static final String USER="cricket_user";
-    private static final String PASSWORD="cricket123";
+import java.sql.SQLException;
 
-    public static Connection getConnection(){
-        try{
-            Connection connection=DriverManager.getConnection(URL,USER,PASSWORD);
-            return connection;
-        } catch (Exception e) {
+public class DBConnection implements ConnectionProvider {
+
+    private final String url;
+    private final String user;
+    private final String password;
+
+    public DBConnection(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
+    }
+
+    @Override
+    public Connection getConnection() {
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
             throw new RuntimeException("Database connection failed", e);
         }
     }

@@ -2,13 +2,28 @@ package com.bharath.cricket.service;
 
 import com.bharath.cricket.dao.PlayerDAO;
 
-public class PlayerService {
-    PlayerDAO playerDAO = new PlayerDAO();
+import java.util.List;
 
-    public void showTopRunScorers(){
-        playerDAO.getTopRunScorers();
+public class PlayerService {
+
+    private final PlayerDAO playerDAO;
+
+    // Constructor Injection (MANDATORY)
+    public PlayerService(PlayerDAO playerDAO) {
+        this.playerDAO = playerDAO;
     }
-    public void showPlayerStats(int playerId){
-        playerDAO.getPlayerCareerStats(playerId);
+
+    public List<String> getTopRunScorers() {
+        return playerDAO.getTopRunScorers();
+    }
+
+    public List<String> getPlayerStats(int playerId) {
+
+        // Validation (service layer responsibility)
+        if (playerId <= 0) {
+            throw new IllegalArgumentException("Invalid player ID");
+        }
+
+        return playerDAO.getPlayerCareerStats(playerId);
     }
 }
